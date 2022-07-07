@@ -1,15 +1,15 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import "./db/mongoose.js";
+import { validationResult } from "express-validator";
+
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 
-import "./db/mongoose.js";
-
 import { registerValidator } from "./validators/auth.js";
-import { validationResult } from "express-validator";
 import { User } from "./models/User.js";
-
-import bcrypt from "bcrypt";
+import checkAuth from "./utils/checkAuth.js";
 
 const app = express();
 app.use(express.json());
@@ -36,8 +36,10 @@ app.get("/", (req, res) => {
 // });
 
 app.post("/auth/login", async (req, res) => {
+  const userEmail = req.body.email;
+  console.log(userEmail);
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const user = await User.findOne({ email: userEmail });
     if (!user) {
       return req.status(404).json({
         message: "user not found ",
@@ -127,15 +129,46 @@ app.post("/auth/register", registerValidator, async (req, res) => {
 app.get("/users/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
 
     const { id: userID } = req.params;
     const user = await User.findById(userID);
 
-    console.log(user);
     res.json(user);
   } catch (error) {
     console.log(error);
+  }
+});
+
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+});
+
+app.get("/auth/me", checkAuth, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "user not found ",
+      });
+    }
+
+    const { passwordHash, ...userData } = user._doc;
+
+    res.json({
+      ...userData,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "access denied  ",
+    });
   }
 });
 

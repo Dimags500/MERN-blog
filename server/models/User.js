@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    password: {
+    passwordHash: {
       type: String,
       requred: true,
     },
@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema(
   },
 
   {
-    timeseries: true,
+    timestamps: true,
   }
 );
 
