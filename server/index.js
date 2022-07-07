@@ -13,14 +13,14 @@ app.get("/", (req, res) => {
 });
 
 app.post("/auth/login", userController.userLogin);
-
 app.post("/auth/register", registerValidator, userController.userRegister);
+app.get("/auth/me", checkAuth, userController.userAuthCheck);
 
 app.get("/users/:id", userController.getUserById);
+app.delete("/users/:id", userController.deleteUserById);
+app.put("/users/:id", userController.updateUserById);
 
 app.get("/users", userController.getUsers);
-
-app.get("/auth/me", checkAuth, userController.userAuthCheck);
 
 const PORT = 3030;
 app.listen(PORT, (err) => {

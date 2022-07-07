@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
+import { validationResult } from "express-validator/src/validation-result.js";
 
 const userRegister = async (req, res) => {
   try {
@@ -105,8 +106,6 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   try {
-    const { id } = req.params;
-
     const { id: userID } = req.params;
     const user = await User.findById(userID);
 
@@ -139,4 +138,33 @@ const userAuthCheck = async (req, res) => {
   }
 };
 
-export { userLogin, userRegister, getUsers, getUserById, userAuthCheck };
+const deleteUserById = async (req, res) => {
+  try {
+    const { id: userID } = req.params;
+    const user = await User.findByIdAndDelete({ _id: userID });
+
+    res.status(200).send({ data: user });
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+};
+
+const updateUserById = async (req, res) => {
+  try {
+    res.send("update method");
+  } catch (error) {
+    console.log(error);
+    res.send(error.message);
+  }
+};
+
+export {
+  userLogin,
+  userRegister,
+  getUsers,
+  getUserById,
+  userAuthCheck,
+  deleteUserById,
+  updateUserById,
+};
