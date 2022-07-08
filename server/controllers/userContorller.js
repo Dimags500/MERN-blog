@@ -3,97 +3,6 @@ import bcrypt from "bcrypt";
 import { User } from "../models/User.js";
 import { validationResult } from "express-validator/src/validation-result.js";
 
-const userRegister = async (req, res) => {
-  try {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array());
-    }
-
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-
-    const doc = new User({
-      fullName: req.body.fullName,
-      email: req.body.email,
-      avatarUrl: req.body.avatarUrl,
-      passwordHash: hash,
-    });
-
-    const user = await doc.save();
-
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret",
-      {
-        expiresIn: "30d",
-      }
-    );
-
-    const { passwordHash, ...userData } = user._doc;
-
-    res.json({
-      ...userData,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "cant register",
-    });
-  }
-};
-
-const userLogin = async (req, res) => {
-  const userEmail = req.body.email;
-  console.log(userEmail);
-  try {
-    const user = await User.findOne({ email: userEmail });
-    if (!user) {
-      return req.status(404).json({
-        message: "user not found ",
-      });
-    }
-
-    const isValidPass = await bcrypt.compare(
-      req.body.password,
-      user._doc.passwordHash
-    );
-
-    if (!isValidPass) {
-      return req.status(404).json({
-        message: "wrong password or login ",
-      });
-    }
-
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret",
-      {
-        expiresIn: "30d",
-      }
-    );
-
-    const { passwordHash, ...userData } = user._doc;
-
-    res.json({
-      ...userData,
-      token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "cant login",
-    });
-  }
-};
-
 const getUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -115,35 +24,12 @@ const getUserById = async (req, res) => {
   }
 };
 
-const userAuthCheck = async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-
-    if (!user) {
-      return res.status(404).json({
-        message: "user not found ",
-      });
-    }
-
-    const { passwordHash, ...userData } = user._doc;
-
-    res.json({
-      ...userData,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "access denied  ",
-    });
-  }
-};
-
 const deleteUserById = async (req, res) => {
   try {
     const { id: userID } = req.params;
     const user = await User.findByIdAndDelete({ _id: userID });
 
-    res.status(200).send({ data: user });
+    res.status(200).json({ succsess: true });
   } catch (error) {
     console.log(error);
     res.send(error.message);
@@ -152,19 +38,29 @@ const deleteUserById = async (req, res) => {
 
 const updateUserById = async (req, res) => {
   try {
-    res.send("update method");
+    const errors = validationResult(req);
+    const { id: userID } = req.params;
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array());
+    }
+
+    let post = await User.updateOne(
+      { _id: userID },
+      {
+        fullName: req.body.fullName,
+        email: req.body.email,
+        avatarUrl: req.body.avatarUrl,
+      }
+    );
+
+    res.json({ success: true });
   } catch (error) {
     console.log(error);
-    res.send(error.message);
+    res.status(500).json({
+      message: "cant update user ",
+    });
   }
 };
 
-export {
-  userLogin,
-  userRegister,
-  getUsers,
-  getUserById,
-  userAuthCheck,
-  deleteUserById,
-  updateUserById,
-};
+export { getUsers, getUserById, deleteUserById, updateUserById };
