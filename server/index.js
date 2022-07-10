@@ -6,13 +6,14 @@ import { loginValidator } from "./validators/login.js";
 import { postValidator } from "./validators/post..js";
 
 import checkAuth from "./utils/checkAuth.js";
-
+import { upload } from "./db/millter.js";
 import * as authController from "./controllers/authController.js";
 import * as userController from "./controllers/userContorller.js";
 import * as postController from "./controllers/postController.js";
 
 const app = express();
 app.use(express.json());
+app.use("/uploads", express.static("server/data/uploads"));
 
 app.get("/", (req, res) => {
   res.send("home page ");
@@ -33,6 +34,12 @@ app.get("/posts/:id", postController.getPostById);
 app.delete("/posts/:id", checkAuth, postController.deletePostById);
 app.put("/posts/:id", checkAuth, postValidator, postController.updatePostById);
 app.post("/posts", checkAuth, postValidator, postController.createPost);
+
+app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
+  res.json({
+    url: `/data/uploads${req.file.originalname}`,
+  });
+});
 
 const PORT = 3030;
 app.listen(PORT, (err) => {
