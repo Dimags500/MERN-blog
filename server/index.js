@@ -1,5 +1,6 @@
 import express from "express";
 import "./db/mongoose.js";
+import cors from "cors";
 
 import { registerValidator } from "./validators/auth.js";
 import { loginValidator } from "./validators/login.js";
@@ -12,6 +13,7 @@ import * as userController from "./controllers/userContorller.js";
 import * as postController from "./controllers/postController.js";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("server/data/uploads"));
 
