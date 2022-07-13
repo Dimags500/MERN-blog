@@ -31,6 +31,8 @@ app.put("/users/:id", checkAuth, userController.updateUserById);
 
 app.get("/users", userController.getUsers);
 
+app.get("/tags", postController.getLastTags);
+
 app.get("/posts", postController.getAllPosts);
 app.get("/posts/:id", postController.getPostById);
 app.delete("/posts/:id", checkAuth, postController.deletePostById);

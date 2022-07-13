@@ -23,7 +23,7 @@ const createPost = async (req, res) => {
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find(); //populate(["user"]).exec();
+    const posts = await Post.find().populate("user").exec();
     res.json(posts);
   } catch (error) {
     console.log(error);
@@ -122,4 +122,28 @@ const deletePostById = async (req, res) => {
   }
 };
 
-export { createPost, getAllPosts, getPostById, deletePostById, updatePostById };
+const getLastTags = async (req, res) => {
+  try {
+    const posts = await Post.find().limit(5).populate("user").exec();
+
+    const tages = posts
+      .map((item) => item.tags)
+      .flat()
+      .slice(0, 5);
+    res.json(tages);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "cant get tages ",
+    });
+  }
+};
+
+export {
+  createPost,
+  getAllPosts,
+  getPostById,
+  deletePostById,
+  updatePostById,
+  getLastTags,
+};
