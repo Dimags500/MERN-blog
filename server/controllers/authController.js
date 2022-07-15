@@ -27,6 +27,7 @@ const authCheck = async (req, res) => {
 };
 
 const register = async (req, res) => {
+  console.log(req.body);
   try {
     const errors = validationResult(req);
 
@@ -39,7 +40,7 @@ const register = async (req, res) => {
     const hash = await bcrypt.hash(password, salt);
 
     const doc = new User({
-      fullName: req.body.fullName,
+      fullName: req.body.fullname,
       email: req.body.email,
       avatarUrl: req.body.avatarUrl,
       passwordHash: hash,

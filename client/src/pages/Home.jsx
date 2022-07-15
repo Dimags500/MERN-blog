@@ -13,7 +13,7 @@ import { fetchPosts , fetchTags} from '../redux/slices/posts';
 
 export const Home = () => {
   const dispatch = useDispatch() ; 
-  // const userData  = useSelector(state => state.auth.data) ;
+  const userData  = useSelector(state => state.auth.data) ;
   const  {posts, tags } = useSelector(state => state.posts); 
 
 
@@ -52,7 +52,7 @@ export const Home = () => {
               viewsCount={obj.viewsCount}
               commentsCount={3}
               tags={[...obj.tags]}
-              // isEditable={userData?._id === obj.user._id}
+              isEditable={userData?._id === obj.user._id}
             />
           ))}
         </Grid>
