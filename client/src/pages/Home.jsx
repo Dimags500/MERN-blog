@@ -20,6 +20,8 @@ export const Home = () => {
   const isPostsLoading = posts.status === 'loading' ;
   const isTagsLoading = tags.status === 'loading' ;
 
+  const defaultImage = 'https://cdn.pellerex.com/public/ecosystem/web/content/identity/react-identity-check/react-redux.png';
+  const baseURL = "http://localhost:3030";
 
   useEffect(() => {
   
@@ -28,7 +30,7 @@ export const Home = () => {
    
   }, [dispatch])
   
-
+console.log(posts);
   return (
     <>
       <Tabs style={{ marginBottom: 15 }} value={0} aria-label="basic tabs example">
@@ -43,7 +45,7 @@ export const Home = () => {
             <Post
               id={obj._id}
               title={obj.title}
-              imageUrl="https://res.cloudinary.com/practicaldev/image/fetch/s--UnAfrEG8--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/icohm5g0axh9wjmu4oc3.png"
+              imageUrl ={ obj.imageUrl ? baseURL+obj.imageUrl : defaultImage }
               user={{
                 avatarUrl:obj.user.avatarUrl ,
                 fullName : obj.user.fullName
