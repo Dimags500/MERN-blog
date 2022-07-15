@@ -41,7 +41,7 @@ app.post("/posts", checkAuth, postValidator, postController.createPost);
 
 app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
-    url: `/data/uploads${req.file.originalname}`,
+    url: `/uploads/${req.file.originalname}`,
   });
 });
 
