@@ -10,7 +10,7 @@ import styles from './Login.module.scss';
 
 import { useNavigate } from "react-router-dom";
 import {useDispatch , useSelector } from 'react-redux'
-import {fetchAuth, selectIsAuth} from '../../redux/slices/auth'
+import {fetchAuth, fetchRegister, selectIsAuth} from '../../redux/slices/auth'
 import {useForm} from 'react-hook-form'
 
 export const Registration = () => {
@@ -24,7 +24,7 @@ export const Registration = () => {
   const dispatch = useDispatch() ;  
   const {register , handleSubmit , setError , formState : {errors , isValid}} = useForm({
     defaultValues : {
-      fullname : '' ,
+      fullName : '' ,
       email : '' ,
       password : '',
     } ,
@@ -37,7 +37,7 @@ export const Registration = () => {
   }
   
   const onSubmit = async (values) =>{
-  //  const data = await dispatch(fetchAuth(values)) ;
+   const data = await dispatch(fetchRegister(values)) ;
   
   //  if('token' in data.payload){
   //   window.localStorage.setItem('token' , data.payload.token)
@@ -60,9 +60,9 @@ export const Registration = () => {
       <TextField 
          className={styles.field}
         label="FullName"
-        error ={Boolean(errors.fullname?.message)}
-        helperText={errors.fullname?.message}
-        {...register('fullname' , {required: 'Enter fullname'})}
+        error ={Boolean(errors.fullName?.message)}
+        helperText={errors.fullName?.message}
+        {...register('fullName' , {required: 'Enter fullname'})}
         fullWidth />
 
       <TextField className={styles.field} label="E-Mail" fullWidth 
